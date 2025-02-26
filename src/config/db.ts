@@ -8,14 +8,17 @@ const state: any = {
 };
 
 const connect = async (): Promise<void> => {
-    state.pool = await mysql.createPool( {
+    state.pool = mysql.createPool( {
         connectionLimit: 100,
         multipleStatements: true,
         host: process.env.SENG365_MYSQL_HOST,
         user: process.env.SENG365_MYSQL_USER,
         password: process.env.SENG365_MYSQL_PASSWORD,
         database: process.env.SENG365_MYSQL_DATABASE,
-        port: parseInt(process.env.SENG365_MYSQL_PORT,10) || 3306
+        port: parseInt(process.env.SENG365_MYSQL_PORT,10) || 3306,
+        ssl: {
+            rejectUnauthorized: false
+        }
     } );
     await state.pool.getConnection(); // Check connection
     Logger.info(`Successfully connected to database`)

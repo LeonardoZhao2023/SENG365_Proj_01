@@ -4,9 +4,12 @@ import * as defaultUsers from "../resources/default_users.json"
 import * as passwords from "../services/passwords";
 const imageDirectory = './storage/images/';
 const defaultPhotoDirectory = './storage/default/';
+import bcrypt from 'bcrypt';
 
 import Logger from "../../config/logger";
 import {OkPacket, ResultSetHeader, RowDataPacket} from "mysql2";
+
+const SALT_ROUNDS = 10;
 
 const resetDb = async (): Promise<any> => {
     const promises = [];
@@ -65,7 +68,7 @@ const populateDefaultUsers = async (): Promise<void> => {
 }
 
 async function changePasswordToHash(user:any, passwordIndex:number) {
-    user[passwordIndex] = await passwords.hash(user[passwordIndex]);
+    user[passwordIndex] = await bcrypt.hash(user[passwordIndex], SALT_ROUNDS);
 }
 
 const executeSql = async (sql: string): Promise<RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader> => {
